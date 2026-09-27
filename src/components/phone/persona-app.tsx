@@ -7,7 +7,7 @@ import { useBandCall } from "@/components/band/use-band-call";
 import { ArrowUpIcon, BandIcon } from "@/components/icons";
 import { usePersonaName } from "@/components/use-persona-name";
 import { continueOnBand, live, onboarding, sendText } from "@/services/conductor";
-import type { Surface, ThreadItem } from "@/domain/onboarding";
+import type { ThreadItem } from "@/domain/onboarding";
 import { useStore } from "@/lib/store";
 
 import { CallPill } from "./call-pill";
@@ -62,11 +62,6 @@ const ROW = {
   exit: { opacity: 0, scale: 0.98, transition: { duration: 0.15 } },
 };
 
-const MEDIUM: Record<Surface, string> = {
-  app: "In the app",
-  band: "On a call",
-};
-
 type Role = Extract<ThreadItem, { kind: "message" }>["role"];
 
 /** Where a bubble sits in its group, which decides which corners tighten. */
@@ -74,7 +69,6 @@ type BubbleShape = "single" | "first" | "middle" | "last";
 
 type Row =
   | Extract<ThreadItem, { kind: "card" | "reminder" | "inbox_scan" | "event" }>
-  | { kind: "medium"; id: string; label: string }
   | { kind: "bubble"; id: string; role: Role; text: string; shape: BubbleShape }
   | { kind: "typing"; id: string; shape: BubbleShape }
   | { kind: "answer"; id: string };
@@ -116,14 +110,12 @@ function bubbleShape(index: number, count: number): BubbleShape {
 
 /**
  * The whole conversation - what was typed here and said on the band - as
- * rows, each knowing how far it sits from the one above. A marker shows where
- * it changed hands, once both places are in play. The typing dots and the
+ * rows, each knowing how far it sits from the one above. The typing dots and the
  * answer chip join Persona's group as one more item in it.
  */
 function threadRows(thread: ThreadItem[], { typing, question }: { typing: boolean; question: string | null }): SpacedRow[] {
   const rows: SpacedRow[] = [];
   let group: { role: Role; entries: GroupEntry[] } | null = null;
-  let medium: Surface | null = null;
 
   const push = (row: Row, inGroup: boolean) =>
     rows.push({ row, spacing: rows.length === 0 ? "none" : inGroup ? "group" : "turn" });
@@ -152,11 +144,6 @@ function threadRows(thread: ThreadItem[], { typing, question }: { typing: boolea
       push(item, false);
       continue;
     }
-    if (item.via !== medium && (medium !== null || item.via === "band")) {
-      closeGroup();
-      push({ kind: "medium", id: `medium:${item.id}`, label: MEDIUM[item.via] }, false);
-    }
-    medium = item.via;
     addToGroup(
       item.role,
       paragraphs(item.text).map((text, index) => ({ id: `${item.id}:${index}`, text })),
@@ -265,8 +252,6 @@ const BUBBLE_CORNERS: Record<Role, Record<BubbleShape, string>> = {
 
 function ThreadRow({ row }: { row: Exclude<Row, { kind: "answer" }> }) {
   switch (row.kind) {
-    case "medium":
-      return <p className="text-center text-caption2 font-medium uppercase tracking-[0.06em] text-white/35">{row.label}</p>;
     case "event":
       return <p className="text-center text-caption font-medium text-white/35">{row.text}</p>;
     case "card":
