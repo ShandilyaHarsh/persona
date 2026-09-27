@@ -84,7 +84,9 @@ function answerText(result: CardResult): string | null {
 function cardEvent(card: CardKind, result: CardResult): string {
   switch (result.status) {
     case "chosen":
-      return `The user named you "${result.name}". Take it warmly in a few words and carry on.`;
+      return onboarding.get().profile.userName
+        ? `The user named you "${result.name}". Take it warmly in a few words and carry on.`
+        : `The user named you "${result.name}". Take it warmly in a few words, then ask what to call them. Their name comes before anything else, Gmail included.`;
     case "connected":
       return `The user connected Gmail (${result.email}). You've started going through their demo inbox - it takes a moment, and you'll get an [event] when it's done. Meanwhile, ask whether they've used a personal agent before, like muse, instinct or poke.`;
     case "picked":

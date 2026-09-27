@@ -156,6 +156,11 @@ async function showCard(owner: RealtimeSession, args: Record<string, unknown>, s
   const userAsked = asBoolean(args.user_asked) === true;
   // Cards that would teach nobody anything, or ask again what was answered.
   if (card === "connect_gmail" && state.gmail === "connected") return { status: "connected", email: state.profile.gmail };
+  // The brief's order: both names, then Gmail. Refusing here (rather than
+  // trusting the prompt) makes the model ask for their name first.
+  if (card === "connect_gmail" && !state.profile.userName && !userAsked) {
+    return { error: "Not shown: you don't know their name yet. Ask what to call them first; Gmail comes after." };
+  }
   if (card === "connect_gmail" && state.gmail === "declined" && !userAsked) {
     return { error: "Not shown: they declined Gmail. Only show it again if they ask - then pass user_asked: true." };
   }
