@@ -1,26 +1,109 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Persona's own palette: white paper, Apple ink, the iMessage blue and green. */
+@theme {
+  --font-sans: -apple-system, "system-ui", "SF Pro Display", "SF Pro Text", Inter, "Helvetica Neue", Arial, sans-serif;
+  --color-ink: #1d1d1f;
+  --color-ink-muted: #6e6e73;
+  --color-ink-faint: #a1a1a6;
+  --color-paper: #ffffff;
+  --color-well: #f2f2f7;
+  --color-line: #e5e5ea;
+  --color-imessage: #0a84ff;
+  --color-positive: #34c759;
+  --color-critical: #ff3b30;
+  --ease-out-soft: cubic-bezier(0.2, 0, 0, 1);
+
+  /*
+   * iOS text styles (Apple HIG, default Dynamic Type size), with the tracking
+   * iOS applies to SF Pro at each size. Browsers don't track SF for you, and
+   * untracked SF is most of what makes a web mockup read as "web".
+   */
+  --text-caption2: 11px;
+  --text-caption2--line-height: 13px;
+  --text-caption2--letter-spacing: 0.06px;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-caption--letter-spacing: 0px;
+  --text-footnote: 13px;
+  --text-footnote--line-height: 18px;
+  --text-footnote--letter-spacing: -0.08px;
+  --text-subhead: 15px;
+  --text-subhead--line-height: 20px;
+  --text-subhead--letter-spacing: -0.24px;
+  --text-callout: 16px;
+  --text-callout--line-height: 21px;
+  --text-callout--letter-spacing: -0.31px;
+  --text-body: 17px;
+  --text-body--line-height: 22px;
+  --text-body--letter-spacing: -0.43px;
+  --text-title3: 20px;
+  --text-title3--line-height: 25px;
+  --text-title3--letter-spacing: -0.45px;
+  --text-title2: 22px;
+  --text-title2--line-height: 28px;
+  --text-title2--letter-spacing: -0.26px;
+  --text-title1: 28px;
+  --text-title1--line-height: 34px;
+  --text-title1--letter-spacing: 0.36px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes typing-dot {
+  0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-2px); }
+}
+
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* A haptic, drawn: three quick shakes, then a rest, while a reminder is due. */
+@keyframes band-buzz {
+  0%, 45%, 100% { translate: 0 0; }
+  5%, 15%, 25%, 35% { translate: -3px 0; }
+  10%, 20%, 30%, 40% { translate: 3px 0; }
+}
+
+@keyframes ring-pulse {
+  from { scale: 1; opacity: 0.7; }
+  to { scale: 1.7; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
