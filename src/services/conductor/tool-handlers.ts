@@ -130,7 +130,7 @@ function saveDetails(args: Record<string, unknown>) {
   return {
     status: ignored.length ? "partly_saved" : "saved",
     ...(gmailIsNext() && {
-      next: "Both names are in, so Gmail is next: one short line asking them to hook it up, and call show_card connect_gmail in this same turn.",
+      next: "Both names are in, so Gmail is next: call show_card connect_gmail now. If you already mentioned Gmail this turn, say nothing more; otherwise one short line asking them to hook it up.",
     }),
     ...(ignored.length && { not_saved: ignored, why: "Each must be a non-empty string, or true/false for used_agents and gmail_declined." }),
     still_missing: missingFields(onboarding.get()),

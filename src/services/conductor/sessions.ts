@@ -63,7 +63,9 @@ async function connect(surface: Surface, reason: string | undefined, replyToReas
   patchLive({
     session: { surface, status: "connecting" },
     caption: null,
-    ...(surface === "band" && { bandNotice: null }),
+    // A call brings the app up alongside it: the transcript and any card land
+    // there, and they can tap or type as easily as talk.
+    ...(surface === "band" && { bandNotice: null, phoneScreen: "persona" as const, banner: null, unread: 0 }),
   });
 
   // Handlers can fire before `open` resolves - a connect that fails closes
