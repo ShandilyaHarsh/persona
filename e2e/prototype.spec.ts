@@ -16,7 +16,7 @@ test("the prototype loads, and the decisions page is one tap away and back", asy
   await page.getByRole("link", { name: "Assumptions & decisions" }).click();
   await expect(page).toHaveURL("/decisions");
   const steps = page.getByRole("navigation", { name: "Onboarding steps" });
-  await steps.getByRole("button", { name: /Gmail/ }).click();
+  await steps.getByRole("button", { name: /^(\d+[a-z]? )?Gmail / }).click();
   await expect(page.getByRole("heading", { level: 3, name: "Gmail" })).toBeVisible();
 
   await page.getByRole("link", { name: "Prototype" }).click();

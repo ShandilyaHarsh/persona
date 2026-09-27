@@ -12,7 +12,9 @@ const MODEL_TIMEOUT_MS = 30_000;
 async function expectReplyTo(page: Page, userText: string) {
   await expect.poll(async () => (await repliesAfter(page, userText)).length, { timeout: MODEL_TIMEOUT_MS }).toBeGreaterThan(0);
   const [reply] = await repliesAfter(page, userText);
-  await expect(page.getByRole("log")).toContainText(reply.text);
+  // The app shows each paragraph of a message as its own bubble.
+  const [firstParagraph] = reply.text.split(/\n\s*\n/);
+  await expect(page.getByRole("log")).toContainText(firstParagraph.trim());
 }
 
 test("text onboarding: name Persona, give your name, skip Gmail", async ({ page }) => {
@@ -24,8 +26,9 @@ test("text onboarding: name Persona, give your name, skip Gmail", async ({ page 
   const nameChip = log.getByRole("button", { name: "Sam", exact: true });
   await expect(nameChip).toBeVisible();
   await nameChip.click();
-  await expect(log.getByText("Sam", { exact: true })).toBeVisible();
+  // The card leaves once answered, and the answer becomes the user's bubble.
   await expect(log.getByRole("button", { name: "Ava", exact: true })).toHaveCount(0);
+  await expect(log.getByText("Sam", { exact: true })).toBeVisible();
   await expectReplyTo(page, "Sam");
 
   const composer = page.getByPlaceholder(/^Message/);
@@ -36,7 +39,7 @@ test("text onboarding: name Persona, give your name, skip Gmail", async ({ page 
   const notNow = log.getByRole("button", { name: "Not now" });
   await expect(log.getByRole("button", { name: "Connect Gmail" })).toBeVisible({ timeout: MODEL_TIMEOUT_MS });
   await notNow.click();
-  await expect(log.getByText("Not now", { exact: true })).toBeVisible();
   await expect(notNow).toHaveCount(0);
+  await expect(log.getByText("Not now", { exact: true })).toBeVisible();
   await expectReplyTo(page, "Not now");
 });
